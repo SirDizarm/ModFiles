@@ -1,0 +1,36 @@
+ItemEntity that changes when dropped in water		
+
+public void spawnItem(World world, BlockPos pos, IItemProvider entity, ItemEntity en) {
+		ItemEntity itementity = new ItemEntity(world, en.getPosX(), en.getPosY(), en.getPosZ(), new ItemStack(entity, 1));
+		itementity.setMotion(new Vector3d(0.0D, 0.0D, 0.0D));
+		itementity.setNoGravity(true);
+		world.addEntity(itementity);
+		}
+		
+		@Override
+		public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+			Random rand = new Random();
+			Random rand2 = new Random();
+			 Potion potion = null;
+			List<Potion> pots = ImmutableList.of(Potions.HEALING,Potions.HARMING,Potions.REGENERATION,Potions.SLOWNESS,Potions.POISON,Potions.WEAKNESS);
+			potion = pots.get(rand.nextInt(6));
+			ItemStack potion2 = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), potion);
+			List<Item> items = ImmutableList.of(Items.STICK, Items.GLOWSTONE_DUST, Items.GUNPOWDER, Items.REDSTONE);
+
+			if (this == stack.getItem().asItem()) {
+				
+				if (entity instanceof ItemEntity && entity.isInWater()) {
+					entity.setMotion(new Vector3d(0.0D, 0.0D, 0.0D));
+					World world = entity.world;
+					BlockPos pos = entity.getPosition();
+					if(rand2.nextInt(50) == 10) {
+						spawnItem(world, pos, potion2.getItem(), entity);
+					}else {
+						spawnItem(world, pos, items.get(rand.nextInt(4)), entity);
+					}
+					
+					entity.remove();
+				}
+			}
+			return false;
+		}
